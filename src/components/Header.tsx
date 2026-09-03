@@ -38,13 +38,13 @@ export default function Header() {
           className="flex items-center gap-3"
           onClick={() => setOpen(false)}
         >
-          <span className="grid h-11 w-11 place-items-center rounded-full bg-ink">
+          <span className="block h-11 w-11 overflow-hidden rounded-full bg-black">
             <Image
               src="/images/logo@2x.png"
               alt=""
-              width={40}
-              height={40}
-              className="h-9 w-9 object-contain"
+              width={44}
+              height={44}
+              className="h-11 w-11 object-cover"
               priority
             />
           </span>
