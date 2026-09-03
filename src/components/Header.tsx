@@ -38,16 +38,14 @@ export default function Header() {
           className="flex items-center gap-3"
           onClick={() => setOpen(false)}
         >
-          <span className="block h-11 w-11 overflow-hidden rounded-full bg-black">
-            <Image
-              src="/images/logo@2x.png"
-              alt=""
-              width={44}
-              height={44}
-              className="h-11 w-11 object-cover"
-              priority
-            />
-          </span>
+          <Image
+            src="/images/logo-mark.png"
+            alt=""
+            width={44}
+            height={44}
+            className="h-11 w-11 object-contain"
+            priority
+          />
           <span
             className={`hidden font-display text-lg font-semibold leading-tight sm:block ${
               solid ? "text-ink" : "text-white"

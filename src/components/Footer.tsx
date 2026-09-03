@@ -10,15 +10,13 @@ export default function Footer() {
     <footer className="bg-ink text-white">
       <div className="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:px-8 md:grid-cols-[1.2fr_1fr_1.4fr_1fr]">
         <div>
-          <span className="block h-24 w-24 overflow-hidden rounded-full bg-black">
-            <Image
-              src="/images/logo@2x.png"
-              alt={site.name}
-              width={96}
-              height={96}
-              className="h-24 w-24 object-cover"
-            />
-          </span>
+          <Image
+            src="/images/logo-mark.png"
+            alt={site.name}
+            width={96}
+            height={96}
+            className="h-24 w-24 object-contain"
+          />
         </div>
 
         <div>
