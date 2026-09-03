@@ -1,0 +1,70 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# ── Source material (design refs, raw photos, invoices) ─────────────
+# These live in the working folder for reference but are not part of the
+# site. Optimized copies that the site actually uses are in /public/images.
+*.HEIC
+*.heic
+*.MOV
+*.mov
+*.xcf
+/Cush Moving Company Figma.pdf
+/Ms. Diaz Move Proposal  (1).pdf
+/Mulch Job Proposal .pdf
+/Conscious Packs Invoices/
+/Talkin Tacos Invoices/
+/Photos Videos/
+/About Contact Payment.jpeg.png
+/Banner Background Gradient.png
+/Banner Background.png
+/banner.jpg
+/junk-removal.jpg
+/button-background.png
+/display-border.png
+/divider.png
+/footer-background.png
+/truck-lighter.png
+/logo.jpg
+/logo-transparent.png
+/logo-transparent-filled.png
