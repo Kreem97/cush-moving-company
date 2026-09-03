@@ -48,17 +48,31 @@ public/images/        Optimized photos + logo used by the site
 
 ## Quote form delivery
 
-`POST /api/quote` validates the submission. To actually deliver requests by
-email, set these environment variables (e.g. in `.env.local` or your host):
+`POST /api/quote` validates the submission, then emails it — including any
+uploaded photos as attachments — via [Resend](https://resend.com).
+
+**Setup is one environment variable.** In Vercel → Project → Settings →
+Environment Variables (or `.env.local` for local dev):
 
 ```
-RESEND_API_KEY=re_...      # https://resend.com
-QUOTE_FROM=quotes@yourdomain.com   # a verified Resend sender
-QUOTE_INBOX=cushmovingcompany1@gmail.com   # optional; defaults to the site email
+RESEND_API_KEY=re_...
 ```
 
-Without them, submissions are accepted and logged server-side so you can wire in
-any inbox or webhook later without changing the front end.
+1. Sign up at Resend using the inbox that should receive quotes
+   (e.g. `cushmovingcompany1@gmail.com`).
+2. Create an API key and paste it in.
+
+That's it. `QUOTE_INBOX` defaults to the site email and `QUOTE_FROM` defaults to
+Resend's shared `onboarding@resend.dev` sender, so no domain setup is required.
+For the best inbox placement later, verify your domain in Resend and set
+`QUOTE_FROM` to an address on it.
+
+**Uploads:** photos/videos are attached to the notification email, capped at
+10 MB total (email providers reject large messages). The form tells users to
+text bigger videos to the business number.
+
+Without `RESEND_API_KEY`, the form still works — submissions are accepted and
+logged server-side (`delivered: false`), not emailed.
 
 ## Source material
 

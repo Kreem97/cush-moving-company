@@ -22,8 +22,9 @@ export type Service = {
   title: string;
   blurb: string;
   image: string;
-  /** grid span on large screens */
+  /** grid spans: tablet (sm) + desktop (lg), tiled to fill with no gaps */
   className: string;
+  featured?: boolean;
 };
 
 export const services: Service[] = [
@@ -31,36 +32,37 @@ export const services: Service[] = [
     title: "Full Service Move",
     blurb: "Packing, loading, transport, and setup — start to finish.",
     image: "/images/full-service-move.jpg",
-    className: "lg:col-span-2 lg:row-span-2",
+    className: "sm:col-span-2 lg:col-span-2 lg:row-span-2",
+    featured: true,
   },
   {
     title: "Installs / Assembly",
     blurb: "Furniture, shelving, and fixtures assembled and mounted right.",
     image: "/images/installs-assembly.jpg",
-    className: "lg:col-span-2",
+    className: "sm:col-span-1 lg:col-span-2",
   },
   {
     title: "Pickup & Delivery",
     blurb: "Store runs, marketplace buys, and same-day drop-offs.",
     image: "/images/pickup-delivery.jpg",
-    className: "lg:col-span-2",
+    className: "sm:col-span-1 lg:col-span-1",
   },
   {
     title: "Freight Hauling",
     blurb: "Palletized and oversized loads moved on schedule.",
     image: "/images/freight-hauling.jpg",
-    className: "lg:col-span-3",
+    className: "sm:col-span-2 lg:col-span-1",
   },
   {
     title: "Home Goods",
     blurb: "Single items to whole rooms, moved without the scratches.",
     image: "/images/home-goods.jpg",
-    className: "lg:col-span-3",
+    className: "sm:col-span-2 lg:col-span-2",
   },
   {
     title: "Junk Removal",
     blurb: "Haul-away and disposal for cleanouts and renovations.",
     image: "/images/junk-removal.jpg",
-    className: "lg:col-span-6",
+    className: "sm:col-span-2 lg:col-span-2",
   },
 ];

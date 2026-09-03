@@ -3,7 +3,13 @@ import { site } from "@/lib/site";
 
 export const runtime = "nodejs";
 
-const MAX_TOTAL_BYTES = 25 * 1024 * 1024;
+// Kept in sync with the client. Email providers reject large messages, so
+// photos are attached up to this budget and bigger videos are declined.
+const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
+
+// Resend's shared sender — works with no domain setup. Deliverability to
+// arbitrary inboxes is best with a verified domain + your own QUOTE_FROM.
+const DEFAULT_FROM = `${site.name} <onboarding@resend.dev>`;
 
 type QuotePayload = {
   name: string;
@@ -21,7 +27,15 @@ export async function POST(request: Request) {
   try {
     form = await request.formData();
   } catch {
-    return NextResponse.json({ error: "Invalid form submission." }, { status: 400 });
+    return NextResponse.json(
+      { error: "Invalid form submission." },
+      { status: 400 },
+    );
+  }
+
+  // Honeypot — bots fill hidden fields, humans don't.
+  if (String(form.get("company") ?? "").trim() !== "") {
+    return NextResponse.json({ ok: true });
   }
 
   const payload: QuotePayload = {
@@ -30,11 +44,6 @@ export async function POST(request: Request) {
     email: String(form.get("email") ?? "").trim(),
     description: String(form.get("description") ?? "").trim(),
   };
-
-  // Honeypot — bots fill hidden fields, humans don't.
-  if (String(form.get("company") ?? "").trim() !== "") {
-    return NextResponse.json({ ok: true });
-  }
 
   if (!payload.name || !payload.phone || !payload.description) {
     return NextResponse.json(
@@ -49,17 +58,29 @@ export async function POST(request: Request) {
     );
   }
 
-  const attachments = form
+  const files = form
     .getAll("attachments")
     .filter((entry): entry is File => entry instanceof File && entry.size > 0);
 
-  const totalBytes = attachments.reduce((sum, file) => sum + file.size, 0);
-  if (totalBytes > MAX_TOTAL_BYTES) {
+  const totalBytes = files.reduce((sum, file) => sum + file.size, 0);
+  if (totalBytes > MAX_ATTACHMENT_BYTES) {
     return NextResponse.json(
-      { error: "Attachments must total under 25 MB." },
+      {
+        error:
+          "Photos and videos must total under 10 MB. For larger files, text them to " +
+          site.phone +
+          ".",
+      },
       { status: 413 },
     );
   }
+
+  const attachments = await Promise.all(
+    files.map(async (file) => ({
+      filename: file.name || "attachment",
+      content: Buffer.from(await file.arrayBuffer()).toString("base64"),
+    })),
+  );
 
   const summary = [
     `New quote request — ${site.name}`,
@@ -72,49 +93,63 @@ export async function POST(request: Request) {
     payload.description,
     "",
     attachments.length
-      ? `Attachments: ${attachments.map((f) => f.name).join(", ")}`
+      ? `Attachments (${attachments.length}): ${attachments
+          .map((a) => a.filename)
+          .join(", ")}`
       : "Attachments: none",
   ].join("\n");
 
   const resendKey = process.env.RESEND_API_KEY;
-  const to = process.env.QUOTE_INBOX ?? site.email;
-  const from = process.env.QUOTE_FROM;
+  const to = process.env.QUOTE_INBOX || site.email;
+  const from = process.env.QUOTE_FROM || DEFAULT_FROM;
 
-  // If email delivery is configured, send it. Otherwise accept the request and
-  // log it so a real inbox/webhook can be wired in without touching the client.
-  if (resendKey && from) {
-    try {
-      const res = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${resendKey}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          from,
-          to,
-          reply_to: payload.email,
-          subject: `Quote request from ${payload.name}`,
-          text: summary,
-        }),
-      });
-      if (!res.ok) {
-        console.error("Resend error", await res.text());
-        return NextResponse.json(
-          { error: "We couldn't send your request. Please call us instead." },
-          { status: 502 },
-        );
-      }
-    } catch (err) {
-      console.error("Quote email failed", err);
+  if (!resendKey) {
+    // No provider configured (e.g. local dev). Accept the request and log it
+    // so it isn't silently lost; set RESEND_API_KEY to enable email delivery.
+    console.warn(
+      "[quote] RESEND_API_KEY not set — request received but NOT emailed:\n" +
+        summary,
+    );
+    return NextResponse.json({ ok: true, delivered: false });
+  }
+
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${resendKey}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        from,
+        to,
+        reply_to: payload.email,
+        subject: `Quote request from ${payload.name} (${payload.phone})`,
+        text: summary,
+        attachments: attachments.length ? attachments : undefined,
+      }),
+    });
+
+    if (!res.ok) {
+      console.error("[quote] Resend error", res.status, await res.text());
       return NextResponse.json(
-        { error: "We couldn't send your request. Please call us instead." },
+        {
+          error:
+            "We couldn't send your request. Please call or text " + site.phone + ".",
+        },
         { status: 502 },
       );
     }
-  } else {
-    console.info("[quote] delivery not configured — request received:\n" + summary);
+  } catch (err) {
+    console.error("[quote] delivery failed", err);
+    return NextResponse.json(
+      {
+        error:
+          "We couldn't send your request. Please call or text " + site.phone + ".",
+      },
+      { status: 502 },
+    );
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ ok: true, delivered: true });
 }

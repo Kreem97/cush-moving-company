@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 type Status = "idle" | "submitting" | "success" | "error";
 
 const MAX_FILES = 6;
-const MAX_TOTAL_BYTES = 25 * 1024 * 1024; // 25 MB
+const MAX_TOTAL_BYTES = 10 * 1024 * 1024; // 10 MB — email attachment budget
 
 export default function QuoteForm() {
   const [status, setStatus] = useState<Status>("idle");
@@ -19,7 +19,9 @@ export default function QuoteForm() {
     const next = [...files, ...Array.from(list)].slice(0, MAX_FILES);
     const total = next.reduce((sum, f) => sum + f.size, 0);
     if (total > MAX_TOTAL_BYTES) {
-      setError("Attachments must total under 25 MB.");
+      setError(
+        "Photos and videos must total under 10 MB. Text larger videos to the number below.",
+      );
       return;
     }
     setError(null);
@@ -195,7 +197,7 @@ export default function QuoteForm() {
           Upload Images / Videos
         </button>
         <p className="mt-1 text-sm text-muted">
-          or drag and drop — up to {MAX_FILES} files, 25 MB total
+          or drag and drop — up to {MAX_FILES} files, 10 MB total
         </p>
 
         {files.length > 0 && (
