@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { services } from "@/lib/site";
 
 export default function Services() {
@@ -7,8 +8,9 @@ export default function Services() {
       <div className="mx-auto max-w-6xl px-5 sm:px-8">
         <div className="grid auto-rows-[13rem] grid-cols-1 gap-4 sm:auto-rows-[15rem] sm:grid-cols-2 lg:grid-cols-4">
           {services.map((service) => (
-            <article
-              key={service.title}
+            <Link
+              key={service.slug}
+              href={`/services/${service.slug}`}
               className={`group relative isolate overflow-hidden rounded-3xl shadow-card ${service.className}`}
             >
               <Image
@@ -33,7 +35,7 @@ export default function Services() {
                   {service.blurb}
                 </p>
               </div>
-            </article>
+            </Link>
           ))}
         </div>
       </div>

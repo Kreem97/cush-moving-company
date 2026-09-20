@@ -1,7 +1,10 @@
 import Image from "next/image";
-import { nav, site } from "@/lib/site";
+import Link from "next/link";
+import { nav, services, site } from "@/lib/site";
 
-const footerLinks = nav.filter((item) => item.label !== "Home");
+const footerLinks = nav.filter(
+  (item) => item.label !== "Home" && item.label !== "Services"
+);
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -10,18 +13,29 @@ export default function Footer() {
     <footer className="bg-ink text-white">
       <div className="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:px-8 md:grid-cols-[1.2fr_1fr_1.4fr_1fr]">
         <div>
-          <Image
-            src="/images/logo-mark.png"
-            alt={site.name}
-            width={96}
-            height={96}
-            className="h-24 w-24 object-contain"
-          />
+          <Link href="/">
+            <Image
+              src="/images/logo-mark.png"
+              alt={site.name}
+              width={96}
+              height={96}
+              className="h-24 w-24 object-contain"
+            />
+          </Link>
         </div>
 
         <div>
-          <h3 className="font-display text-lg font-semibold">Site</h3>
+          <h3 className="font-display text-lg font-semibold">Services</h3>
           <ul className="mt-4 space-y-2 text-sm text-white/75">
+            {services.map((s) => (
+              <li key={s.slug}>
+                <Link href={`/services/${s.slug}`} className="hover:text-white">
+                  {s.title}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <ul className="mt-4 space-y-2 border-t border-white/10 pt-4 text-sm text-white/75">
             {footerLinks.map((item) => (
               <li key={item.href}>
                 <a href={item.href} className="hover:text-white">
