@@ -1,8 +1,8 @@
 export const site = {
   name: "Cush Moving Company",
   legalName: "Cush Moving Company LLC",
-  phone: "(954) 670-7440",
-  phoneHref: "tel:+19546707440",
+  phone: "(954) 670-7740",
+  phoneHref: "tel:+19546707740",
   email: "cushmovingcompany1@gmail.com",
   serviceArea: "South Florida",
   social: {
