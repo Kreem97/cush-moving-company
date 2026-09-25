@@ -62,10 +62,8 @@ RESEND_API_KEY=re_...
    (e.g. `cushmovingcompany1@gmail.com`).
 2. Create an API key and paste it in.
 
-That's it. `QUOTE_INBOX` defaults to the site email and `QUOTE_FROM` defaults to
-Resend's shared `onboarding@resend.dev` sender, so no domain setup is required.
-For the best inbox placement later, verify your domain in Resend and set
-`QUOTE_FROM` to an address on it.
+That's it. `QUOTE_INBOX` defaults to the site email and `QUOTE_FROM` defaults
+to `quotes@cushmovingcompany.com`, an address on our verified Resend domain.
 
 **Uploads:** photos/videos are attached to the notification email, capped at
 10 MB total (email providers reject large messages). The form tells users to

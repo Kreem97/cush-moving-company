@@ -7,9 +7,9 @@ export const runtime = "nodejs";
 // photos are attached up to this budget and bigger videos are declined.
 const MAX_ATTACHMENT_BYTES = 10 * 1024 * 1024;
 
-// Resend's shared sender — works with no domain setup. Deliverability to
-// arbitrary inboxes is best with a verified domain + your own QUOTE_FROM.
-const DEFAULT_FROM = `${site.name} <onboarding@resend.dev>`;
+// Sends from our verified Resend domain so delivery isn't limited to the
+// sandbox sender's "your own signup email only" restriction.
+const DEFAULT_FROM = `${site.name} <quotes@cushmovingcompany.com>`;
 
 type QuotePayload = {
   name: string;
